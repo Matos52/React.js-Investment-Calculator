@@ -1,49 +1,34 @@
 import Header from "./components/Header";
 import UserInput from "./components/UserInput";
-import Result from "./components/Result";
+import Results from "./components/Results";
 import { useState } from "react";
+import { calculateInvestmentResults } from "./util/investment";
 
 function App() {
-  const [initialInvestment, setInitialInvestment] = useState("1");
-  const [annualInvestment, setAnnualInvestment] = useState("1");
-  const [expectedReturn, setExpectedReturn] = useState("1");
-  const [duration, setDuration] = useState("1");
+  const[userInput, setUserInput] = useState({
+    initialInvestment: 10000,
+    annualInvestment: 1200,
+    expectedReturn: 6,
+    duration: 10
+  })
 
-  function handleInitialInvestment(event) {
-    setInitialInvestment(event.target.value);
-  }
+  const inputIsValid = userInput.duration >= 1;
 
-  function handleAnnualInvestment(event) {
-    setAnnualInvestment(event.target.value);
-  }
-
-  function handleExpectedReturn(event) {
-    setExpectedReturn(event.target.value);
-  }
-
-  function handleDuration(event) {
-    setDuration(event.target.value);
+  function handleChange(inputIdentifier, newValue) {
+    setUserInput((prevUserInput) => {
+      return {
+        ...prevUserInput,
+        [inputIdentifier]: +newValue,
+      };
+    });
   }
 
   return (
     <div>
       <Header />
-      <UserInput
-        onInitialInvestment={handleInitialInvestment}
-        initialInvestmentValue={initialInvestment}
-        onAnnualInvestment={handleAnnualInvestment}
-        annualInvestmentValue={annualInvestment}
-        onExpectedReturn={handleExpectedReturn}
-        expectedReturnValue={expectedReturn}
-        onDuration={handleDuration}
-        durationValue={duration}
-      />
-      <Result
-        initialInvestmentValue={initialInvestment}
-        annualInvestmentValue={annualInvestment}
-        expectedReturnValue={expectedReturn}
-        durationValue={duration}
-      />
+      <UserInput userInput={userInput} onChange={handleChange} />
+      {!inputIsValid && <p className="center">Please insert duration greater than zero.</p>}
+      {inputIsValid && <Results input={userInput}/>}
     </div>
   );
 }
